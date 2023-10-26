@@ -83,6 +83,12 @@ resource "yandex_kms_symmetric_key" "kms-key" {
   rotation_period   = "8760h" # 1 год.
 }
 
+resource "yandex_resourcemanager_folder_iam_binding" "storage-admin" {
+  folder_id = var.folder_id
+  role = "storage.admin"
+  members = [ "serviceAccount:${yandex_iam_service_account.myaccount.id}" ]
+}
+
 // создаем security group
 resource "yandex_vpc_security_group" "k8s-public-services" {
   name        = "k8s-public-services"
@@ -193,4 +199,14 @@ resource "yandex_storage_bucket" "mybucket" {
   secret_key = yandex_iam_service_account_static_access_key.sa-static-key.secret_key
   bucket = "momo-store-pictures-bucket"
   acl    = "public-read"
+}
+
+
+resource "yandex_storage_object" "image" {
+  access_key = yandex_iam_service_account_static_access_key.sa-static-key.access_key
+  secret_key = yandex_iam_service_account_static_access_key.sa-static-key.secret_key
+  count = 14
+  bucket = yandex_storage_bucket.mybucket.bucket
+  key    = "${count.index + 1}.jpg"
+  source = "images/${count.index + 1}.jpg"
 }
