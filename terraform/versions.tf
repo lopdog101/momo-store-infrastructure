@@ -1,10 +1,9 @@
-# Описание версии Terraform и версии провайдера yandex-cloud/yandex, необходимых для root модуля 
-
 terraform {
+  required_version = ">= 1.3"
   required_providers {
     yandex = {
+      version = ">= 0.85"
       source  = "yandex-cloud/yandex"
-      version = ">= 0.13"
     }
-  }
+  }  
 }
