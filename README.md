@@ -12,7 +12,6 @@
   - [Подготовка кластера](#подготовка-кластера)
 - [Установка ArgoCD](#установка-argocd)
 - [Установка Grafana](#установка-grafana)
-- [Установка Loki](#установка-loki)
 - [Установка Prometheus](#установка-prometheus)
 - [Правила версионирования](#правила-версионирования)
 - [Правила внесения изменений в репозиторий](#правила-внесения-изменений-в-репозиторий)
@@ -148,3 +147,15 @@ kubectl apply -n argocd -f ingress.yml
 kubectl apply -n argocd -f user.yml
 kubectl apply -n argocd -f policy.yml
 ```
+# Установка-prometheus
+
+За основу взят helm chart с sasusage-store, был добавлен только Ingress контроллер, для доступа к сервису
+Сервис располагается по адресу: https://prometheus.momo-diplom-yandex.mooo.com
+
+```bash
+cd kubernetes-system
+helm upgrade --install prometheus prometheus/
+```
+Видим, что данные приходят и логи собираются
+
+![image.png](./image.png)
