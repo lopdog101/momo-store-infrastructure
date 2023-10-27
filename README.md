@@ -40,13 +40,59 @@
 
 ## Кластер и хранилище
 
-Заполнить файл `.s3conf`
+1. Создадим авторизованный ключ для сервисного аккаунта и запишем его файл:
 
 ```bash
-terraform init
-terraform plan -var-file secret.tfvars
-terraform apply - var-file secret.tfvars
+yc iam key create \
+  --service-account-id <идентификатор_сервисного_аккаунта> \
+  --folder-name <имя_каталога_с_сервисным_аккаунтом> \
+  --output key.json
 ```
+Где:
+
+  - service-account-id — идентификатор сервисного аккаунта.
+  - folder-name — имя каталога, в котором создан сервисный аккаунт.
+  - output — имя файла с авторизованным ключом.
+
+
+Пример результата:
+
+```bash
+id: aje8nn871qo4a8bbopvb
+service_account_id: ajehr0to1g8bh0la8c8r
+created_at: "2022-09-14T09:11:43.479156798Z"
+key_algorithm: RSA_2048
+```
+2. Создаем профиль CLI для выполнения операций от имени сервисного аккаунта. Укажите имя профиля:
+
+```bash
+yc config profile create <имя_профиля>
+```
+
+Результат:
+
+```bash
+Profile 'sa-terraform' created and activated
+```
+
+Где:
+  - service-account-key — файл с авторизованным ключом сервисного аккаунта.
+  - cloud-id — идентификатор облака.
+  - older-id — идентификатор каталога.
+
+3. Добавьте аутентификационные данные в переменные окружения:
+
+```bash
+export YC_TOKEN=$(yc iam create-token)
+export YC_CLOUD_ID=$(yc config get cloud-id)
+export YC_FOLDER_ID=$(yc config get folder-id)
+```
+
+Где:
+
+  - YC_TOKEN — IAM-токен.
+  - YC_CLOUD_ID — идентификатор облака.
+  - YC_FOLDER_ID — идентификатор каталога.
 
 ## Подготовка кластера
 
