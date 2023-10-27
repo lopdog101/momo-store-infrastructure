@@ -89,3 +89,16 @@ kubectl get svc -n ingress-nginx
 Для этого воспользуемся бесплатным ресурсом https://freedns.afraid.org
 Регистрация на нем бесплатная, создаем DNS запись, основываясь инструкцией на сайте.
 Указываем IP-адрес из предыдущего пункта и сохраним этот субдомен в качестве переменной MOMO_URL в Gitlab в настройках CI/CD
+
+
+## Установка ArgoCD
+
+Доступ к ArgoCD можно получить по ссылке https://argocd.momo-diplom-yandex.mooo.com
+```bash
+cd kubernetes-system/argocd
+kubectl create namespace argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+kubectl apply -n argocd -f ingress.yml
+kubectl apply -n argocd -f user.yml
+kubectl apply -n argocd -f policy.yml
+```
