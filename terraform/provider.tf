@@ -2,9 +2,12 @@
 #Для инициализации провайдера может понадобится VPN.
 
 provider "yandex" {
-  cloud_id  = "b1glnhfo1pb5aqli71pj"
-  folder_id = "b1g8tnrko4q1emhf9mqk"
-  zone      = "ru-central1-a"
+  cloud_id  = var.cloud_id
+  folder_id = var.folder_id
+  zone      = var.zone
  }
  
- 
+ variable "yc_token" {
+    description = "OAuth token"
+    sensitive = true
+}
