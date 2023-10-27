@@ -158,7 +158,7 @@ helm upgrade --install prometheus prometheus/
 ```
 Видим, что данные приходят и логи собираются
 
-![image.png](./image.png)
+![image.png](./README/Img/image.png)
 
 # Установка Grafana
 
