@@ -159,3 +159,14 @@ helm upgrade --install prometheus prometheus/
 Видим, что данные приходят и логи собираются
 
 ![image.png](./image.png)
+
+# Установка Grafana
+
+За основу взят helm chart с sasusage-store, был добавлен только Ingress контроллер, для доступа к сервису
+Сервис располагается по адресу: https://grafana.momo-diplom-yandex.mooo.com/
+
+```bash
+cd kubernetes-system
+helm upgrade --install grafana grafana/
+```
+При входе меняем дефодтный пароль admin/admin
