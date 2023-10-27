@@ -6,8 +6,3 @@ provider "yandex" {
   folder_id = var.folder_id
   zone      = var.zone
  }
- 
- variable "yc_token" {
-    description = "OAuth token"
-    sensitive = true
-}

@@ -1,9 +1,3 @@
-#variable "token" {
-#  description = "user token"
-#  sensitive = true
-#  nullable  = false
-#}
-
 variable "cloud_id" {
   type        = string
   description = "virtual cloud id"
