@@ -1,5 +1,5 @@
 ---
-host: "prometheus.cherkashin.org"
+host: "	prometheus.momo-diplom-yandex.mooo.com	"
 # В массиве yandex_cloud_services можно указать конфигурацию
 # сервисов Yandex Cloud для сбора метрик в prometheus.
 # https://cloud.yandex.ru/docs/monitoring/operations/metric/prometheusExport
