@@ -50,23 +50,29 @@ terraform apply - var-file secret.tfvars
 
 ## Подготовка кластера
 
-Установить Ingress-контроллер NGINX по инфтрукции от Яндекс:
+Чтобы с помощью Kubernetes создать Ingress-контроллер NGINX и защитить его сертификатом Let's Encrypt®, выполните следующие действия:
+
+ Устанавливаем NGINX Ingress Controller
 
 ```bash
-helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-helm repo update
-
-helm install ingress-nginx ingress-nginx/ingress-nginx
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.5.1/deploy/static/provider/cloud/deploy.yaml
 ```
 
-Установить менеджер сертификатов:
+Устанавливаем менеджер сертификатов:
 
 ```bash
-kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.10.0/cert-manager.yaml
+kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.6.1/cert-manager.yaml
 ```
 
-Создать объект ClusterIssuer
+Также нужно создайть манифест acme-issuer.yaml
 
 ```bash
-kubectl apply -f acme-issuer.yml
+kubectl apply -f acme-issuer.yaml
+```
+В поле mail вводим валидный адрес электронной почты. 
+
+Манифест sa.yml необходим для создания сервисного аккуанта для последующего формирования статического конфига для доступа к кластеру, например из CI/CD
+
+```bash
+kubectl apply -f service-account.yaml
 ```
