@@ -1,0 +1,42 @@
+---
+groups:
+  - name: Sausage store rules
+    rules:
+    - alert: InstanceDown
+      expr: up{app="backend"} == 0
+      for: 1m
+      labels:
+        severity: critical
+        project: "sausage_store"
+        component: "Backend"
+
+#    - alert: SuccessfulPOSTrequests
+#      expr: histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket{method="POST",uri="/api/orders"}[5m])) by (le)) > 0.1
+#      for: 2m
+#      labels:
+#        severity: critical
+#        project: "sausage_store"
+#        component: "Backend"
+#      annotations:
+#        summary: Successful POST requests over 100ms (instance {{ $labels.instance }})
+#        description: "Successful POST requests over 100ms, 95th percentile is over 0.1s\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+#    - alert: ProbeRequestFailure500
+#      expr: http_server_requests_seconds_count{status="500"} == 1
+#      for: 0m
+#      labels:
+#        severity: critical
+#        project: "sausage_store"
+#        component: "Backend"
+#      annotations:
+#        summary: Probe request 500 failure (instance {{ $labels.instance }})
+#        description: "Status code is 500\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+
+#    - alert: ErrRequestFailureDuration_2
+#      expr: sum by (uri)(rate(http_server_requests_seconds_count{status!~"2.*",uri=~"/actuator/prometheus"}[2m]))
+#      for: 0m
+#      labels:
+#        severity: critical
+#        project: "sausage_store"
+#        component: "Backend"

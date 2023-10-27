@@ -1,5 +1,5 @@
 ---
-host: "	prometheus.momo-diplom-yandex.mooo.com	"
+host: "prometheus.momo-diplom-yandex.mooo.com"
 # В массиве yandex_cloud_services можно указать конфигурацию
 # сервисов Yandex Cloud для сбора метрик в prometheus.
 # https://cloud.yandex.ru/docs/monitoring/operations/metric/prometheusExport
@@ -17,3 +17,5 @@ host: "	prometheus.momo-diplom-yandex.mooo.com	"
 #    folderId: b1g2hqnugteh52j2dfr
 #    bearer_token: AQVN3veeVseTVUm4RFjy-WRt9INXbdkS6Q8iC3Bh
 #    scrape_interval: 60s
+
+yandex_cloud_services: []
