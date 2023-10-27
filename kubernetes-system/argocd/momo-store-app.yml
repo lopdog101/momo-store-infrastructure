@@ -1,0 +1,9 @@
+project: default
+source:
+  repoURL: 'https://nexus.k8s.praktikum-services.tech/repository/momo-diplom-lysyuk/'
+  targetRevision: 0.2.885143
+  chart: momo-store
+destination:
+  server: 'https://kubernetes.default.svc'
+syncPolicy:
+  automated: {}
