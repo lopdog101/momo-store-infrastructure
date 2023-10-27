@@ -76,3 +76,11 @@ kubectl apply -f acme-issuer.yaml
 ```bash
 kubectl apply -f service-account.yaml
 ```
+
+## Узнайтем IP-адрес Ingress-контроллера
+
+Нам нужно значение из колонки EXTERNAL-IP:
+
+```bash
+kubectl get svc -n ingress-nginx
+```
