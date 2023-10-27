@@ -84,6 +84,7 @@ resource "yandex_kms_symmetric_key" "kms-key" {
 }
 
 resource "yandex_resourcemanager_folder_iam_binding" "storage-admin" {
+   # Сервисному аккаунту назначается роль "storage.admin".
   folder_id = var.folder_id
   role = "storage.admin"
   members = [ "serviceAccount:${yandex_iam_service_account.myaccount.id}" ]

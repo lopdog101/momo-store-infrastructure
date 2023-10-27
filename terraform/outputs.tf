@@ -19,3 +19,16 @@
 #    description = "Public IP address"
 #    value = module.yandex_compute_instance.public_ip
 #}
+
+locals {
+  urls = [
+    for i in yandex_storage_object.image :
+    "${yandex_storage_bucket.mybucket.bucket.bucket_domain_name}/${i.key}"
+  ]
+}
+
+output ImageURLs {
+
+  value = local.urls
+  
+}
