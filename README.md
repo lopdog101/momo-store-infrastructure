@@ -183,9 +183,6 @@ kubectl -n kube-system get secrets -o json | jq -r '.items[] | select(.metadata.
 Генерируем конфиг
 
 ```bash
-kubectl -n kube-system get secrets -o json | jq -r '.items[] | select(.metadata.name | startswith("admin-user")) | .data.token' | base64 --decode
-```
-
 export KUBE_URL=https://<Публичный адрес K8s>   # Важно перед IP указать https://
 export KUBE_TOKEN=<Полученный ранее>
 export KUBE_USERNAME=admin-user
@@ -195,7 +192,7 @@ kubectl config set-cluster "$KUBE_CLUSTER_NAME" --server="$KUBE_URL" --insecure-
 kubectl config set-credentials "$KUBE_USERNAME" --token="$KUBE_TOKEN"
 kubectl config set-context default --cluster="$KUBE_CLUSTER_NAME" --user="$KUBE_USERNAME"
 kubectl config use-context default
-
+```
 ## Подготовка кластера
 
 Чтобы с помощью Kubernetes создать Ingress-контроллер NGINX и защитить его сертификатом Let's Encrypt®, выполните следующие действия:
