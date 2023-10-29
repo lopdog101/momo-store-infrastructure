@@ -8,6 +8,7 @@
 
 - [Cтруктура репозитория](#cтруктура-репозитория)
 - [Подготовка инфраструктуры](#подготовка-инфраструктуры)
+  - [Создание кластера в Yandex Cloud](#cоздание-кластера-в-Yandex-Cloud)
   - [Кластер и хранилище](#кластер-и-хранилище)
   - [Подготовка кластера](#подготовка-кластера)
 - [Установка ArgoCD](#установка-argocd)
@@ -38,6 +39,8 @@
 # Подготовка инфраструктуры
 
 ## Кластер и хранилище
+
+Подключаемся к Yandex Cloud
 
 1. Создадим авторизованный ключ для сервисного аккаунта и запишем его файл:
 
@@ -93,6 +96,103 @@ export YC_FOLDER_ID=$(yc config get folder-id)
   - YC_CLOUD_ID — идентификатор облака.
   - YC_FOLDER_ID — идентификатор каталога.
 
+
+## Создание кластера в Yandex Cloud
+
+Создавать K8s кластер будем при помощи Terraform. Terraform позволяет быстро создать облачную инфраструктуру в Yandex Cloud и управлять ею с помощью файлов конфигураций. В файлах конфигураций хранится описание инфраструктуры на языке HCL (HashiCorp Configuration Language). Terraform и его провайдеры распространяются под лицензией Business Source License.
+
+Предварительно создадим бакет в S3 хранилище для сохранения состония работы terraform
+
+```bash
+export AWS_ACCESS_KEY_ID="<идентификатор_ключа>"
+export AWS_SECRET_ACCESS_KEY="<секретный_ключ>"
+```
+
+После чего развернем кластер
+
+```bash
+cd terraform
+terraform apply
+```
+
+## Настройка доступа подключения к K8s
+
+Получаем ID кластера. В панели управления Идентификатор_кластера находится по пути Managed Service for Kubernetes/Кластеры/ваш_кластер -> обзор -> основное -> Идентификатор
+
+Или командой yc managed-kubernetes cluster list в поле ID
+
+```bash
+yc managed-kubernetes cluster get-credentials --id Идентификатор_кластера --external
+```
+
+Проверка доступности кластера
+
+```bash
+kubectl cluster-info
+```
+
+Делаем бэкап текущего ./kube/config
+
+```bash
+cp ~/.kube/config ~/.kube/config.bak
+```
+
+Создаем манифест service-account.yaml
+
+```bash
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: admin-user
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: admin-user
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: admin-user
+  namespace: kube-system
+```
+
+И применяем его
+
+```bash
+kubectl apply -f gitlab-admin-service-account.yaml
+```
+
+Получаем KUBE_TOKEN
+
+```bash
+kubectl apply -f gitlab-admin-service-account.yaml
+```
+
+Получаем endpoint. Публичный ip адрес находится по пути Managed Service for Kubernetes/Кластеры/ваш_кластер -> обзор -> основное -> Публичный IPv4
+
+Получаем KUBE_TOKEN
+
+```bash
+kubectl -n kube-system get secrets -o json | jq -r '.items[] | select(.metadata.name | startswith("admin-user")) | .data.token' | base64 --decode
+```
+
+Генерируем конфиг
+
+```bash
+export KUBE_URL=https://<Публичный адрес K8s>   # Важно перед IP указать https://
+export KUBE_TOKEN=<Полученный ранее>
+export KUBE_USERNAME=admin-user
+export KUBE_CLUSTER_NAME=<Идентификатор_КЛАСТЕРА>
+
+kubectl config set-cluster "$KUBE_CLUSTER_NAME" --server="$KUBE_URL" --insecure-skip-tls-verify=true
+kubectl config set-credentials "$KUBE_USERNAME" --token="$KUBE_TOKEN"
+kubectl config set-context default --cluster="$KUBE_CLUSTER_NAME" --user="$KUBE_USERNAME"
+kubectl config use-context default
+```
 ## Подготовка кластера
 
 Чтобы с помощью Kubernetes создать Ingress-контроллер NGINX и защитить его сертификатом Let's Encrypt®, выполните следующие действия:
@@ -159,6 +259,10 @@ helm upgrade --install prometheus prometheus/
 Видим, что данные приходят и логи собираются
 
 ![image.png](./README/Img/image.png)
+
+![image.png](./image.png)
+
+![image-1.png](./image-1.png)
 
 # Установка Grafana
 
