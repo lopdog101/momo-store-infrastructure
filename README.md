@@ -262,6 +262,8 @@ helm upgrade --install prometheus prometheus/
 
 ![image.png](./image.png)
 
+![image-1.png](./image-1.png)
+
 # Установка Grafana
 
 За основу взят helm chart с sasusage-store, был добавлен только Ingress контроллер, для доступа к сервису
