@@ -115,6 +115,86 @@ cd terraform
 terraform apply
 ```
 
+## Настройка доступа подключения к K8s
+
+Получаем ID кластера. В панели управления Идентификатор_кластера находится по пути Managed Service for Kubernetes/Кластеры/ваш_кластер -> обзор -> основное -> Идентификатор
+
+Или командой yc managed-kubernetes cluster list в поле ID
+
+```bash
+yc managed-kubernetes cluster get-credentials --id Идентификатор_кластера --external
+```
+
+Проверка доступности кластера
+
+```bash
+kubectl cluster-info
+```
+
+Делаем бэкап текущего ./kube/config
+
+```bash
+cp ~/.kube/config ~/.kube/config.bak
+```
+
+Создаем манифест service-account.yaml
+
+```bash
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: admin-user
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: admin-user
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: admin-user
+  namespace: kube-system
+```
+
+И применяем его
+
+```bash
+kubectl apply -f gitlab-admin-service-account.yaml
+```
+
+Получаем KUBE_TOKEN
+
+```bash
+kubectl apply -f gitlab-admin-service-account.yaml
+```
+
+Получаем endpoint. Публичный ip адрес находится по пути Managed Service for Kubernetes/Кластеры/ваш_кластер -> обзор -> основное -> Публичный IPv4
+
+Получаем KUBE_TOKEN
+
+```bash
+kubectl -n kube-system get secrets -o json | jq -r '.items[] | select(.metadata.name | startswith("admin-user")) | .data.token' | base64 --decode
+```
+
+Генерируем конфиг
+
+```bash
+kubectl -n kube-system get secrets -o json | jq -r '.items[] | select(.metadata.name | startswith("admin-user")) | .data.token' | base64 --decode
+```
+
+export KUBE_URL=https://<Публичный адрес K8s>   # Важно перед IP указать https://
+export KUBE_TOKEN=<Полученный ранее>
+export KUBE_USERNAME=admin-user
+export KUBE_CLUSTER_NAME=<Идентификатор_КЛАСТЕРА>
+
+kubectl config set-cluster "$KUBE_CLUSTER_NAME" --server="$KUBE_URL" --insecure-skip-tls-verify=true
+kubectl config set-credentials "$KUBE_USERNAME" --token="$KUBE_TOKEN"
+kubectl config set-context default --cluster="$KUBE_CLUSTER_NAME" --user="$KUBE_USERNAME"
+kubectl config use-context default
 
 ## Подготовка кластера
 
