@@ -273,7 +273,7 @@ helm upgrade --install prometheus prometheus/
 cd kubernetes-system
 helm upgrade --install grafana grafana/
 ```
-При входе меняем дефодтный пароль admin/admin
+При входе меняем дефолтный пароль admin/admin
 
 
 # Правила версионирования
